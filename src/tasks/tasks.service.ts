@@ -1,22 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from '../entities/task.entity';
 import { Repository } from 'typeorm';
+import { UpdateTaskDto } from './dtos/update-task.dto';
+
 
 @Injectable()
 export class TasksService {
     constructor(
         @InjectRepository(Task)
-        private readonly tasksRepository: Repository<Task>,
+        private readonly tasksRepository: Repository<Task>
     ) {}
 
-    async listTasks() {
+    async listTasks() : Promise<Task[]>{
         const tasks = await this.tasksRepository.find();
 
         return tasks;
     }
 
-    async getTask(id: string) {
+    async getTask(id: string) : Promise<Task>{
         const task = await this.tasksRepository
             .createQueryBuilder('task')
             .where(`task.id = "${id}"`)
@@ -25,10 +27,17 @@ export class TasksService {
         return task;
     }
 
-    async editTask(body: any) {
-        await this.tasksRepository.update(body.id, body);
+    async editTask(id: string, body: UpdateTaskDto) : Promise<Task>{
 
-        const editedTask = await this.getTask(body.id);
+        const task = await this.tasksRepository.findOne({where:{id}})
+
+        if(!task){
+            throw new NotFoundException(`La tarea con id ${id} no existe`)
+        }
+
+        await this.tasksRepository.update(id, body);
+
+        const editedTask = await this.getTask(id);
 
         return editedTask;
     }

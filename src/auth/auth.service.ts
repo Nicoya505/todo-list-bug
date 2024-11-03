@@ -15,10 +15,12 @@ export class AuthService {
         const user = await this.usersService.findOne(email);
 
         if (!user) {
+            console.log("falla en el usuario");
             this.logger.log(`User with email ${email} not found`);
             throw new UnauthorizedException();
         }
 
+    
         if (user?.pass !== pass) {
             this.logger.log(`Invalid password for user with email ${email}`);
             throw new UnauthorizedException();
