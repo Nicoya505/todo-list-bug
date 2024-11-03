@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from '../entities/task.entity';
 import { Repository } from 'typeorm';
 import { UpdateTaskDto } from './dtos/update-task.dto';
+import { ErrorManager } from 'src/utils/error.manager';
 
 
 @Injectable()
@@ -13,11 +14,21 @@ export class TasksService {
     ) {}
 
     async listTasks() : Promise<Task[]>{
-        const tasks = await this.tasksRepository.find({
-            relations: ['owner'],
-          });
+        try{
+            const tasks: Task[] = await this.tasksRepository.find({
+                relations: ['owner'],
+              });
 
-        return tasks;
+            if(tasks.length === 0){
+                throw new ErrorManager({
+                    type:'BAD_REQUEST',
+                    message: "No se encontraron resultados de tareas"
+                })
+            }
+            return tasks;
+        }catch(error){
+            throw ErrorManager.createSginatureError(error.message);
+        }
     }
 
     async getTask(taskId: string) : Promise<Task>{

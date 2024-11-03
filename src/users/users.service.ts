@@ -4,6 +4,7 @@ import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { plainToClass } from 'class-transformer';
+import { ErrorManager } from 'src/utils/error.manager';
 
 @Injectable()
 export class UsersService {
@@ -25,17 +26,42 @@ export class UsersService {
     }
 
     async findOne(email: string) : Promise<User>{
-        const user = await this.usersRepository.findOneBy({
-            email,
-        });
 
-        return user;
+        try{
+
+            const user = await this.usersRepository.findOneBy({
+                email,
+            });
+
+            if(!user){
+                throw new ErrorManager({
+                    type:'BAD_REQUEST',
+                    message: `No se encontro usuario con el email ${email}`
+                })
+            }
+            return user;
+        }catch(error){
+            throw ErrorManager.createSginatureError(error.message);
+        }
+        
     }
 
     async getAll() : Promise<User[]>{
-        const users: User[] = await this.usersRepository.find({});
 
-        //return users.map(user => plainToClass(User, user));
-        return users;
+        try{
+
+            const users: User[] = await this.usersRepository.find({});
+
+            if(users.length === 0){
+                throw new ErrorManager({
+                    type:'BAD_REQUEST',
+                    message: "No se encontraron resultados de usuarios"
+                })
+            }
+            //return users.map(user => plainToClass(User, user));
+            return users;
+        }catch(error){
+            throw ErrorManager.createSginatureError(error.message);
+        }
     }
 }

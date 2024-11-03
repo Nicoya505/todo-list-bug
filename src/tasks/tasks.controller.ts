@@ -3,6 +3,7 @@ import { TasksService } from './tasks.service';
 import { UpdateTaskDto } from './dtos/update-task.dto';
 import { OwnerGuard } from 'src/auth/owner.guard';
 import { IsPublic } from 'src/auth/is-public.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('tasks')
 export class TasksController {
@@ -15,6 +16,7 @@ export class TasksController {
         return this.tasksService.listTasks();
     }
 
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     @Get('/:id')
     @UseGuards( OwnerGuard)
@@ -22,6 +24,7 @@ export class TasksController {
         return this.tasksService.getTask(id);
     }
 
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     @Put('/edit/:id')
     @UseGuards( OwnerGuard)

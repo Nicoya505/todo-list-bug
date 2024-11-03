@@ -7,10 +7,11 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({type: 'text', unique: true})
+    
     fullname: string;
 
-    @Column()
+    @Column({type: 'text', unique: true})
     email: string;
 
     // Por motivos de simplicidad, vamos a guardar la contraseña en texto plano
