@@ -35,6 +35,7 @@ export class UsersService {
     async getAll() : Promise<User[]>{
         const users: User[] = await this.usersRepository.find({});
 
-        return users.map(user => plainToClass(User, user));
+        //return users.map(user => plainToClass(User, user));
+        return users;
     }
 }

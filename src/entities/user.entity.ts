@@ -15,7 +15,7 @@ export class User {
 
     // Por motivos de simplicidad, vamos a guardar la contraseña en texto plano
     @Column()
-    @Exclude()
+    //@Exclude()
     pass: string;
 
     @OneToMany(() => Task, (task) => task.owner)

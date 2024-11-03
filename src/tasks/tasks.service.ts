@@ -13,16 +13,18 @@ export class TasksService {
     ) {}
 
     async listTasks() : Promise<Task[]>{
-        const tasks = await this.tasksRepository.find();
+        const tasks = await this.tasksRepository.find({
+            relations: ['owner'],
+          });
 
         return tasks;
     }
 
-    async getTask(id: string) : Promise<Task>{
-        const task = await this.tasksRepository
-            .createQueryBuilder('task')
-            .where(`task.id = "${id}"`)
-            .getOne();
+    async getTask(taskId: string) : Promise<Task>{
+        const task = await this.tasksRepository.findOne({
+            where: { id: taskId },
+            relations: ['owner'],
+          });
 
         return task;
     }
