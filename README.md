@@ -32,3 +32,8 @@ Sigue estos pasos para levantar el proyecto:
    docker-compose up -d
    ```
 
+4. **Prueba la API**
+   Puedes realizar con swagger ui en el siguiente link:
+   ```bash
+   http://localhost:3000/docs
+   ```
